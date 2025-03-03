@@ -4,6 +4,7 @@ const {body, validationResult} = require('express-validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'ayushayushayush'
+const fetchUser = require('../middleware/fetchUser')
 
 router.post('/createuser', [ 
     // Express-validator
@@ -39,13 +40,9 @@ router.post('/createuser', [
         })
         
         // Create an authorization token using jsonwebtoken
-        const data = {
-            user:{
-                id: User.id
-            }
-        }
-        const authToken = jwt.sign(data, JWT_SECRET)
+        const authToken = jwt.sign({ user: { id: User.id } }, JWT_SECRET)
         console.log("token: ",authToken);
+        res.send("User created successfully!")
     } 
     catch (error) {
         console.log(error.message);
@@ -77,14 +74,29 @@ router.post('/login', [
         // Create an authorization token using jsonwebtoken
         const data = {
             user:{
-                id: User.id
+                id: user.id
             }
         }
         const authToken = jwt.sign(data, JWT_SECRET)
-        console.log("token: ",authToken);
-        res.json({ authToken });
+        res.json({authToken})
+        console.log("Login successful!");
+        
     } catch (error) {
         res.send({error: error.message})
+    }
+})
+
+//get user details after login
+router.post('/getuser', fetchUser, async (req, res) => {
+    try {
+        const userId = req.user.id
+        const user = await User.findById(userId).select("-password")
+        if(!user) {
+            return res.status(404).send({error: "User not found!"})
+        }
+        res.send(user)
+    } catch (error) {
+        res.status(500).send({error: "Internal server error!"})
     }
 })
 module.exports = router

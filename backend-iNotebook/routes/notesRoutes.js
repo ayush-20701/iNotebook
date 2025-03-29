@@ -45,7 +45,7 @@ router.post('/addnote', fetchUser, [
 
 //Update an existing note
 router.put('/updatenote/:id', fetchUser, async (req, res) => {
-    try {
+    // try {
         const {title, description, tag} = req.body
         //create a new note object
         const newNote = {}
@@ -54,21 +54,24 @@ router.put('/updatenote/:id', fetchUser, async (req, res) => {
         if(tag){newNote.tag = tag}
     
         //find the note to be updated
-        var note = await Notes.findById(req.params.id)
+        let note = await Notes.findById(req.params.id)
+        console.log(note);
+        
         if(!note) {
             return res.status(404).send("Not found!")
         }
-    
+        console.log("user:",req.user);
+        
         //Allow update only if user owns this note
-        if(note.user.toString() !== req.user.id) {
+        if(!note.user || note.user.toString() !== req.user.id) {
             return res.status(401).send("Not allowed!")
         }
         //update
         note = await Notes.findByIdAndUpdate(req.params.id, {$set: newNote}, {new:true})
         res.json({note})
-    } catch (error) {
-        res.send({error: error})
-    }
+    // } catch (error) {
+    //     res.send({error: error})
+    // }
 })
 
 //Delete an existing note

@@ -42,7 +42,7 @@ router.post('/createuser', [
         // Create an authorization token using jsonwebtoken
         const authToken = jwt.sign({ user: { id: User.id } }, JWT_SECRET)
         console.log("token: ",authToken);
-        res.send("User created successfully!")
+        // res.send("User created successfully!")
     } 
     catch (error) {
         console.log(error.message);
@@ -60,7 +60,7 @@ router.post('/login', [
         return res.status(400).json({errors: errors.array()})
     }
 
-    const {username, password} = req.body
+    const {username, password} = req.body //deconstructor
     try {
         let user = await User.findOne({username})
         if(!user) {

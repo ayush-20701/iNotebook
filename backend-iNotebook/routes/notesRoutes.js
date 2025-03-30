@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 const fetchUser = require('../middleware/fetchUser');
 const Notes = require('../models/notes');
 const {body, validationResult} = require('express-validator')
@@ -29,9 +28,9 @@ router.post('/addnote', fetchUser, [
             return res.status(400).json({errors: errors.array()})
         }
         const note = new Notes({
-            title, 
-            description, 
-            tag, 
+            title,
+            description,
+            tag,
             user: req.user.id
         })
         await note.save()

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const notesSchema = new Schema ({
-    user: {  // 🔹 Add this field to associate notes with a user
-        type: mongoose.Schema.Types.ObjectId,
+    user: {  //Add this field to associate notes with a user
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'user',
     },
     title: {
